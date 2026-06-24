@@ -1,0 +1,38 @@
+services:
+
+  lti_example_app:
+    build: .
+    container_name: '${CONTAINER_NAME}'
+    restart: always
+    ports:
+      - "8088:80"
+    volumes:
+      - lti_example_storage:/var/www/html/storage
+      - ./php/custom.ini:/usr/local/etc/php/conf.d/custom.ini
+    depends_on:
+      - lti_example_db
+    networks:
+      - lti_example_network
+
+  lti_example_db:
+    image: mysql:8.0
+    container_name: '${CONTAINER_DB_NAME}'
+    restart: always
+    environment:
+      MYSQL_ROOT_PASSWORD: '${DB_ROOT_PASSWORD}'
+      MYSQL_DATABASE: '${DB_DATABASE}'
+      MYSQL_USER: '${DB_USERNAME}'
+      MYSQL_PASSWORD: '${DB_PASSWORD}'
+    volumes:
+      - lti_example_db_data:/var/lib/mysql
+    ports:
+      - "3299:3306"
+    networks:
+      - lti_example_network
+
+networks:
+  lti_example_network:
+
+volumes:
+  lti_example_db_data:
+  lti_example_storage:
